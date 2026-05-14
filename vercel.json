@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "public": true,
+  "builds": [
+    { "src": "portfolio.html", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/$", "dest": "/portfolio.html" },
+    { "src": "^/portfolio.html$", "dest": "/portfolio.html" }
+  ]
+}
