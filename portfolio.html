@@ -1,953 +1,1618 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Abdulhannan Dheriwala — Full-Stack Developer</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --bg: #0a0a0a;
-    --bg2: #111111;
-    --bg3: #181818;
-    --surface: #1e1e1e;
-    --border: #2a2a2a;
-    --accent: #e8ff47;
-    --accent2: #ff6b35;
-    --text: #f0f0f0;
-    --muted: #888;
-    --faint: #3a3a3a;
-    --radius: 4px;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
-
-  /* ── NOISE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 9999; opacity: 0.4;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.2rem 2.5rem;
-    background: rgba(10,10,10,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
-    color: var(--accent);
-    letter-spacing: 0.05em;
-    text-decoration: none;
-  }
-
-  .nav-links {
-    display: flex; gap: 2.5rem; list-style: none;
-  }
-
-  .nav-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 0.82rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--accent); }
-
-  .hamburger {
-    display: none; flex-direction: column; gap: 5px; cursor: pointer;
-    background: none; border: none; padding: 4px;
-  }
-  .hamburger span {
-    display: block; width: 24px; height: 2px;
-    background: var(--text); transition: all 0.3s;
-  }
-
-  /* ── MOBILE NAV ── */
-  @media (max-width: 768px) {
-    .nav-links {
-      display: none; position: fixed; inset: 0; top: 60px;
-      flex-direction: column; align-items: center; justify-content: center;
-      background: var(--bg); gap: 3rem;
-    }
-    .nav-links.open { display: flex; }
-    .nav-links a { font-size: 1.2rem; }
-    .hamburger { display: flex; }
-    nav { padding: 1rem 1.5rem; }
-  }
-
-  /* ── SECTIONS ── */
-  section { padding: 6rem 2.5rem; max-width: 1100px; margin: 0 auto; }
-
-  /* ── HERO ── */
-  #hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: center;
-    padding-top: 8rem; padding-bottom: 4rem;
-    position: relative;
-  }
-
-  .hero-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.78rem;
-    color: var(--accent);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
-  }
-
-  .hero-title {
-    font-size: clamp(2.2rem, 6vw, 4.5rem);
-    font-weight: 800;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    margin-bottom: 2rem;
-    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
-  }
-
-  .hero-title span {
-    display: block;
-    color: transparent;
-    -webkit-text-stroke: 1px var(--faint);
-  }
-
-  .hero-desc {
-    max-width: 560px;
-    color: var(--muted);
-    font-size: 1.05rem;
-    line-height: 1.7;
-    margin-bottom: 2.5rem;
-    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
-  }
-
-  .hero-ctas {
-    display: flex; flex-wrap: wrap; gap: 1rem;
-    opacity: 0; animation: fadeUp 0.7s 0.65s forwards;
-  }
-
-  .btn-primary {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    background: var(--accent); color: #0a0a0a;
-    padding: 0.8rem 2rem; font-size: 0.88rem;
-    font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; text-decoration: none;
-    border-radius: var(--radius); transition: transform 0.2s, box-shadow 0.2s;
-    font-family: 'Syne', sans-serif;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,255,71,0.3); }
-
-  .btn-ghost {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    border: 1px solid var(--border); color: var(--text);
-    padding: 0.8rem 2rem; font-size: 0.88rem;
-    font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; text-decoration: none;
-    border-radius: var(--radius); transition: border-color 0.2s, color 0.2s;
-    font-family: 'Syne', sans-serif;
-  }
-  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-
-  .hero-stats {
-    display: flex; flex-wrap: wrap; gap: 2rem;
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
-    opacity: 0; animation: fadeUp 0.7s 0.8s forwards;
-  }
-
-  .stat { display: flex; flex-direction: column; }
-  .stat-num {
-    font-size: 2.2rem; font-weight: 800;
-    color: var(--accent); line-height: 1;
-  }
-  .stat-label {
-    font-size: 0.75rem; color: var(--muted);
-    letter-spacing: 0.1em; text-transform: uppercase;
-    margin-top: 0.3rem;
-  }
-
-  .hero-scroll {
-    position: absolute; bottom: 2rem; left: 2.5rem;
-    font-family: 'DM Mono', monospace; font-size: 0.72rem;
-    color: var(--muted); letter-spacing: 0.15em;
-    text-transform: uppercase;
-    display: flex; align-items: center; gap: 0.8rem;
-    animation: fadeUp 0.7s 1.1s forwards; opacity: 0;
-  }
-  .hero-scroll::before {
-    content: '';
-    display: block; width: 40px; height: 1px;
-    background: var(--muted);
-    animation: expandLine 1.2s 1.5s forwards;
-    transform-origin: left;
-    transform: scaleX(0);
-  }
-  @keyframes expandLine { to { transform: scaleX(1); } }
-
-  /* ── SECTION HEADER ── */
-  .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem; color: var(--accent);
-    letter-spacing: 0.2em; text-transform: uppercase;
-    margin-bottom: 1rem;
-    display: flex; align-items: center; gap: 1rem;
-  }
-  .section-label::after {
-    content: ''; flex: 1; max-width: 60px; height: 1px;
-    background: var(--accent); opacity: 0.4;
-  }
-
-  .section-title {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 800; line-height: 1.05;
-    letter-spacing: -0.02em;
-    margin-bottom: 3rem;
-  }
-
-  /* ── ABOUT ── */
-  #about .about-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
-    align-items: start;
-  }
-
-  .about-text { color: var(--muted); font-size: 1.02rem; line-height: 1.8; }
-  .about-text p + p { margin-top: 1.2rem; }
-  .about-text strong { color: var(--text); }
-
-  .about-links {
-    display: flex; flex-direction: column; gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .platform-link {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 1.2rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    text-decoration: none; color: var(--text);
-    transition: border-color 0.2s, background 0.2s;
-    font-size: 0.9rem;
-  }
-  .platform-link:hover { border-color: var(--accent); background: rgba(232,255,71,0.03); }
-
-  .platform-left { display: flex; align-items: center; gap: 0.8rem; }
-  .platform-icon { font-size: 1.1rem; }
-  .platform-name { font-weight: 600; }
-  .platform-stat {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.78rem; color: var(--accent);
-  }
-
-  @media (max-width: 768px) {
-    #about .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-  }
-
-  /* ── EDUCATION ── */
-  .edu-list { display: flex; flex-direction: column; gap: 1.5rem; }
-
-  .edu-card {
-    padding: 1.8rem 2rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg2);
-    position: relative; overflow: hidden;
-    transition: border-color 0.2s;
-  }
-  .edu-card::before {
-    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-    width: 3px; background: var(--accent);
-  }
-  .edu-card:hover { border-color: var(--faint); }
-
-  .edu-degree { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.3rem; }
-  .edu-school { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.6rem; }
-  .edu-meta {
-    display: flex; flex-wrap: wrap; gap: 1.5rem;
-    font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--muted);
-  }
-  .edu-meta span { display: flex; align-items: center; gap: 0.4rem; }
-  .edu-cgpa { color: var(--accent) !important; font-weight: 500; }
-
-  /* ── SKILLS ── */
-  .skills-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;
-  }
-
-  .skill-group {
-    padding: 1.8rem;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    transition: border-color 0.25s;
-  }
-  .skill-group:hover { border-color: var(--faint); }
-
-  .skill-group-title {
-    font-size: 0.72rem; letter-spacing: 0.18em;
-    text-transform: uppercase; color: var(--accent);
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 1.2rem;
-    padding-bottom: 0.8rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .skill-tag {
-    padding: 0.3rem 0.75rem;
-    background: var(--surface);
-    border-radius: 2px;
-    font-size: 0.82rem; color: var(--text);
-    font-weight: 500;
-    border: 1px solid transparent;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .skill-tag:hover { border-color: var(--border); color: var(--accent); }
-
-  /* ── PROJECTS ── */
-  .projects-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;
-  }
-
-  .project-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 2rem;
-    display: flex; flex-direction: column;
-    transition: border-color 0.25s, transform 0.25s;
-    position: relative; overflow: hidden;
-  }
-  .project-card::after {
-    content: ''; position: absolute;
-    top: 0; right: 0;
-    width: 80px; height: 80px;
-    background: radial-gradient(circle at top right, rgba(232,255,71,0.06), transparent 70%);
-    pointer-events: none;
-  }
-  .project-card:hover { border-color: var(--accent); transform: translateY(-3px); }
-
-  .project-number {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem; color: var(--faint);
-    letter-spacing: 0.1em;
-    margin-bottom: 1.2rem;
-  }
-
-  .project-name { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.8rem; }
-  .project-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.7; flex: 1; margin-bottom: 1.5rem; }
-
-  .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
-  .project-tag {
-    padding: 0.2rem 0.6rem;
-    background: rgba(232,255,71,0.08);
-    color: var(--accent);
-    font-size: 0.73rem; font-family: 'DM Mono', monospace;
-    border-radius: 2px;
-  }
-
-  .project-links { display: flex; gap: 1rem; }
-  .project-link {
-    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; text-decoration: none;
-    color: var(--muted); transition: color 0.2s;
-    display: flex; align-items: center; gap: 0.3rem;
-  }
-  .project-link:hover { color: var(--accent); }
-  .project-link svg { width: 14px; height: 14px; }
-
-  /* ── ACHIEVEMENTS ── */
-  .ach-list { display: flex; flex-direction: column; gap: 1rem; }
-
-  .ach-item {
-    display: flex; align-items: flex-start; gap: 1.2rem;
-    padding: 1.4rem 1.8rem;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    transition: border-color 0.2s;
-  }
-  .ach-item:hover { border-color: var(--faint); }
-
-  .ach-bullet {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--accent); flex-shrink: 0; margin-top: 7px;
-  }
-  .ach-text { color: var(--muted); font-size: 0.95rem; line-height: 1.6; }
-  .ach-text strong { color: var(--text); }
-
-  /* ── CERTIFICATIONS ── */
-  .cert-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem;
-  }
-
-  .cert-card {
-    padding: 1.5rem;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    transition: border-color 0.2s;
-  }
-  .cert-card:hover { border-color: var(--faint); }
-  .cert-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem; }
-  .cert-issuer {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem; color: var(--accent); margin-bottom: 0.3rem;
-  }
-  .cert-year { font-size: 0.78rem; color: var(--muted); }
-
-  /* ── CONTACT ── */
-  #contact .contact-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;
-  }
-
-  .contact-intro { color: var(--muted); font-size: 1.02rem; line-height: 1.8; }
-  .contact-intro p + p { margin-top: 1.2rem; }
-
-  .contact-links { display: flex; flex-direction: column; gap: 0.8rem; }
-
-  .contact-item {
-    display: flex; align-items: center; gap: 1rem;
-    padding: 1rem 1.2rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    text-decoration: none; color: var(--text);
-    font-size: 0.9rem;
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .contact-item:hover { border-color: var(--accent); background: rgba(232,255,71,0.03); }
-  .contact-icon { font-size: 1rem; color: var(--accent); width: 1.4rem; text-align: center; }
-
-  @media (max-width: 768px) {
-    #contact .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 2rem 2.5rem;
-    display: flex; flex-wrap: wrap; gap: 1rem;
-    justify-content: space-between; align-items: center;
-    max-width: 1100px; margin: 0 auto;
-    color: var(--muted); font-size: 0.8rem;
-  }
-  footer span { font-family: 'DM Mono', monospace; }
-  footer a { color: var(--accent); text-decoration: none; }
-
-  /* ── DIVIDER ── */
-  .section-divider {
-    max-width: 1100px; margin: 0 auto;
-    border: none; border-top: 1px solid var(--border);
-  }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .reveal {
-    opacity: 0; transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .reveal.visible { opacity: 1; transform: none; }
-
-  /* ── MOBILE ── */
-  @media (max-width: 640px) {
-    section { padding: 4rem 1.5rem; }
-    .hero-stats { gap: 1.5rem; }
-    .stat-num { font-size: 1.8rem; }
-    .projects-grid { grid-template-columns: 1fr; }
-    .skills-grid { grid-template-columns: 1fr; }
-    .cert-grid { grid-template-columns: 1fr; }
-    footer { flex-direction: column; text-align: center; }
-  }
-</style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav>
-  <a href="#hero" class="nav-logo">&lt;AH /&gt;</a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#about">About</a></li>
-    <li><a href="#education">Education</a></li>
-    <li><a href="#skills">Skills</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-  <button class="hamburger" id="hamburger" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-
-<!-- HERO -->
-<section id="hero">
-  <p class="hero-tag">Full-Stack Developer · MERN Stack · Ranked #1 in Department</p>
-  <h1 class="hero-title">
-    Abdulhannan<span>Dheriwala</span>
-  </h1>
-  <p class="hero-desc">
-    Building production-ready web applications and REST APIs. Passionate about clean architecture, scalable backends, and solving complex problems — 700+ DSA problems solved.
-  </p>
-  <div class="hero-ctas">
-    <a href="#projects" class="btn-primary">View Projects →</a>
-    <a href="#contact" class="btn-ghost">Get In Touch</a>
-  </div>
-  <div class="hero-stats">
-    <div class="stat"><span class="stat-num">700+</span><span class="stat-label">DSA Problems</span></div>
-    <div class="stat"><span class="stat-num">8.63</span><span class="stat-label">CGPA</span></div>
-    <div class="stat"><span class="stat-num">#1</span><span class="stat-label">Dept Rank</span></div>
-    <div class="stat"><span class="stat-num">1542</span><span class="stat-label">LeetCode Rating</span></div>
-  </div>
-  <div class="hero-scroll">Scroll to explore</div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- ABOUT -->
-<section id="about">
-  <p class="section-label reveal">01 — About</p>
-  <h2 class="section-title reveal">Who I Am</h2>
-  <div class="about-grid">
-    <div class="about-text reveal">
-      <p>I'm a <strong>Full-Stack Developer</strong> and final-year B.Tech (IT) student at Parul University, Vadodara — currently ranked <strong>1st in my department</strong>. I specialise in the MERN stack, building scalable REST APIs and full-stack web applications.</p>
-      <p>My approach combines strong CS fundamentals with real-world engineering: clean MVC architecture, role-based auth systems, cloud integrations, and performance-minded design. I've built projects like <strong>Smart-Stay</strong> and a <strong>Course-Selling Platform API</strong> from scratch.</p>
-      <p>Outside work I compete on LeetCode, GeeksForGeeks, and CodeChef — algorithmic thinking keeps my problem-solving sharp. I'm actively seeking <strong>software engineering internship</strong> opportunities.</p>
-      
-    </div>
-    <div class="reveal">
-      <p class="section-label" style="margin-bottom:1.5rem;">Coding Profiles</p>
-      <div style="display:flex;flex-direction:column;gap:0.8rem;">
-        <a href="https://github.com/abdulHannan22" target="_blank" rel="noopener" class="platform-link">
-          <span class="platform-left"><span class="platform-icon">🐙</span><span class="platform-name">GitHub</span></span>
-          <span class="platform-stat">abdulHannan22 →</span>
-        </a>
-        <a href="https://leetcode.com/u/abd_hannan/" target="_blank" rel="noopener" class="platform-link">
-          <span class="platform-left"><span class="platform-icon">⚡</span><span class="platform-name">LeetCode</span></span>
-          <span class="platform-stat">450+ · Rating 1542 →</span>
-        </a>
-        <a href="https://codeforces.com/profile/abd_hannan" target="_blank" rel="noopener" class="platform-link">
-          <span class="platform-left"><span class="platform-icon">🏆</span><span class="platform-name">Codeforces</span></span>
-          <span class="platform-stat">abd_hannan →</span>
-        </a>
-        <a href="https://www.geeksforgeeks.org/user/abdulhannanbncs/" target="_blank" rel="noopener" class="platform-link">
-          <span class="platform-left"><span class="platform-icon">🌿</span><span class="platform-name">GeeksForGeeks</span></span>
-          <span class="platform-stat">160+ problems →</span>
-        </a>
-        <a href="https://www.codechef.com/" target="_blank" rel="noopener" class="platform-link">
-          <span class="platform-left"><span class="platform-icon">👨‍🍳</span><span class="platform-name">CodeChef</span></span>
-          <span class="platform-stat">100+ · Rating 1200 →</span>
-        </a>
-        <a href="https://www.linkedin.com/in/abdulhannan-dheriwala-205506274/" target="_blank" rel="noopener" class="platform-link">
-          <span class="platform-left"><span class="platform-icon">💼</span><span class="platform-name">LinkedIn</span></span>
-          <span class="platform-stat">Connect →</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- EDUCATION -->
-<section id="education">
-  <p class="section-label reveal">02 — Education</p>
-  <h2 class="section-title reveal">Academic Background</h2>
-  <div class="edu-list">
-    <div class="edu-card reveal">
-      <p class="edu-degree">B.Tech — Information Technology</p>
-      <p class="edu-school">Parul University, Vadodara, Gujarat</p>
-      <div class="edu-meta">
-        <span>📅 2024 – 2027 (Expected)</span>
-        <span class="edu-cgpa">⭐ CGPA 8.63 / 10</span>
-        <span>🏆 Ranked 1st in Department (5th Sem)</span>
-      </div>
-    </div>
-    <div class="edu-card reveal">
-      <p class="edu-degree">Diploma — Information Technology</p>
-      <p class="edu-school">Gujarat Technological University, Ahmedabad, Gujarat</p>
-      <div class="edu-meta">
-        <span>📅 2021 – 2024</span>
-        <span class="edu-cgpa">⭐ CGPA 8.70 / 10</span>
-      </div>
-    </div>
-    <div class="edu-card reveal">
-      <p class="edu-degree">Secondary Education — Standard 10th</p>
-      <p class="edu-school">Gujarat Secondary & Higher Secondary Education Board, Vadodara</p>
-      <div class="edu-meta">
-        <span>📅 2020 – 2021</span>
-        <span class="edu-cgpa">⭐ 87.33%</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- SKILLS -->
-<section id="skills">
-  <p class="section-label reveal">03 — Skills</p>
-  <h2 class="section-title reveal">Technical Arsenal</h2>
-  <div class="skills-grid">
-    <div class="skill-group reveal">
-      <p class="skill-group-title">Languages</p>
-      <div class="skill-tags">
-        <span class="skill-tag">JavaScript (ES6+)</span>
-        <span class="skill-tag">C++</span>
-        <span class="skill-tag">Java</span>
-        <span class="skill-tag">Python</span>
-        <span class="skill-tag">HTML5</span>
-        <span class="skill-tag">CSS3</span>
-      </div>
-    </div>
-    <div class="skill-group reveal">
-      <p class="skill-group-title">Frontend</p>
-      <div class="skill-tags">
-        <span class="skill-tag">React.js</span>
-        <span class="skill-tag">Tailwind CSS</span>
-        <span class="skill-tag">Bootstrap</span>
-        <span class="skill-tag">EJS</span>
-        <span class="skill-tag">Responsive Design</span>
-      </div>
-    </div>
-    <div class="skill-group reveal">
-      <p class="skill-group-title">Backend</p>
-      <div class="skill-tags">
-        <span class="skill-tag">Node.js</span>
-        <span class="skill-tag">Express.js</span>
-        <span class="skill-tag">REST API</span>
-        <span class="skill-tag">MVC Architecture</span>
-        <span class="skill-tag">JWT Auth</span>
-        <span class="skill-tag">Passport.js</span>
-      </div>
-    </div>
-    <div class="skill-group reveal">
-      <p class="skill-group-title">Databases</p>
-      <div class="skill-tags">
-        <span class="skill-tag">MongoDB</span>
-        <span class="skill-tag">Mongoose ODM</span>
-        <span class="skill-tag">SQL</span>
-        <span class="skill-tag">Schema Design</span>
-      </div>
-    </div>
-    <div class="skill-group reveal">
-      <p class="skill-group-title">Tools & Platforms</p>
-      <div class="skill-tags">
-        <span class="skill-tag">Git & GitHub</span>
-        <span class="skill-tag">Postman</span>
-        <span class="skill-tag">Cloudinary</span>
-        <span class="skill-tag">Mapbox</span>
-        <span class="skill-tag">Jupyter Notebook</span>
-      </div>
-    </div>
-    <div class="skill-group reveal">
-      <p class="skill-group-title">CS Fundamentals</p>
-      <div class="skill-tags">
-        <span class="skill-tag">DSA</span>
-        <span class="skill-tag">OOP</span>
-        <span class="skill-tag">DBMS</span>
-        <span class="skill-tag">Operating Systems</span>
-        <span class="skill-tag">Computer Networks</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- PROJECTS -->
-<section id="projects">
-  <p class="section-label reveal">04 — Projects</p>
-  <h2 class="section-title reveal">Featured Work</h2>
-  <div class="projects-grid">
-
-    <div class="project-card reveal">
-      <p class="project-number">01 / Featured</p>
-      <h3 class="project-name">Course-Selling Platform API</h3>
-      <p class="project-desc">Scalable REST API for a course marketplace with dual-role access (admin/user), JWT stateless authentication, bcrypt password hashing, and 11 RESTful endpoints across 3 modular route handlers. MongoDB schema with 4 interconnected collections.</p>
-      <div class="project-tags">
-        <span class="project-tag">Node.js</span>
-        <span class="project-tag">Express.js</span>
-        <span class="project-tag">MongoDB</span>
-        <span class="project-tag">JWT</span>
-        <span class="project-tag">bcrypt</span>
-        <span class="project-tag">MVC</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/abdulHannan22/CourseBackend" target="_blank" rel="noopener" class="project-link">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          GitHub
-        </a>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <p class="project-number">02 / Featured</p>
-      <h3 class="project-name">Smart-Stay</h3>
-      <p class="project-desc">Full-stack property listing platform with Passport.js session auth, Cloudinary multi-image uploads, Mapbox geocoding and interactive maps, MVC architecture, server-side EJS rendering, and a full CRUD review system.</p>
-      <div class="project-tags">
-        <span class="project-tag">Node.js</span>
-        <span class="project-tag">Express.js</span>
-        <span class="project-tag">MongoDB</span>
-        <span class="project-tag">EJS</span>
-        <span class="project-tag">Cloudinary</span>
-        <span class="project-tag">Mapbox</span>
-        <span class="project-tag">Passport.js</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/abdulHannan22/Smart-Stay" target="_blank" rel="noopener" class="project-link">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          GitHub
-        </a>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <p class="project-number">03</p>
-      <h3 class="project-name">Spotify Clone</h3>
-      <p class="project-desc">Front-end replica of Spotify's music streaming interface using vanilla JS. Features music playback controls, responsive design, and dynamic DOM manipulation.</p>
-      <div class="project-tags">
-        <span class="project-tag">JavaScript</span>
-        <span class="project-tag">HTML</span>
-        <span class="project-tag">CSS</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/abdulHannan22/Spotify-Clone" target="_blank" rel="noopener" class="project-link">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          GitHub
-        </a>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <p class="project-number">04</p>
-      <h3 class="project-name">Task Management App</h3>
-      <p class="project-desc">Responsive React task manager with Tailwind CSS, localStorage persistence, and an intuitive UI for task creation, completion tracking, and filtering.</p>
-      <div class="project-tags">
-        <span class="project-tag">React.js</span>
-        <span class="project-tag">Tailwind CSS</span>
-        <span class="project-tag">Vite</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/abdulHannan22/Todo-List" target="_blank" rel="noopener" class="project-link">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          GitHub
-        </a>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <p class="project-number">05</p>
-      <h3 class="project-name">Netflix UI Clone</h3>
-      <p class="project-desc">Pixel-perfect static Netflix interface clone demonstrating mastery of CSS Grid, Flexbox, and responsive design for professional streaming service UIs.</p>
-      <div class="project-tags">
-        <span class="project-tag">HTML</span>
-        <span class="project-tag">CSS</span>
-        <span class="project-tag">Responsive</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/abdulHannan22/Netflix-UI-clone" target="_blank" rel="noopener" class="project-link">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          GitHub
-        </a>
-      </div>
-    </div>
-
-    <div class="project-card reveal">
-      <p class="project-number">06</p>
-      <h3 class="project-name">Twitter UI Clone</h3>
-      <p class="project-desc">Faithful recreation of Twitter's interface showcasing advanced HTML/CSS skills with responsive design patterns and precise attention to social media UI aesthetics.</p>
-      <div class="project-tags">
-        <span class="project-tag">HTML</span>
-        <span class="project-tag">CSS</span>
-        <span class="project-tag">Responsive</span>
-      </div>
-      <div class="project-links">
-        <a href="https://github.com/abdulHannan22/Twitter-UI-clone" target="_blank" rel="noopener" class="project-link">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          GitHub
-        </a>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- ACHIEVEMENTS -->
-<section id="achievements">
-  <p class="section-label reveal">05 — Achievements</p>
-  <h2 class="section-title reveal">Honors & Recognition</h2>
-  <div class="ach-list">
-    <div class="ach-item reveal">
-      <div class="ach-bullet"></div>
-      <p class="ach-text"><strong>Academic Excellence:</strong> Ranked 1st in the Information Technology department (5th Semester) at Parul University, Vadodara.</p>
-    </div>
-    <div class="ach-item reveal">
-      <div class="ach-bullet"></div>
-      <p class="ach-text"><strong>Competitive Programming:</strong> Solved 700+ DSA problems across LeetCode, GeeksForGeeks, and CodeChef — demonstrating strong algorithmic problem-solving ability.</p>
-    </div>
-    <div class="ach-item reveal">
-      <div class="ach-bullet"></div>
-      <p class="ach-text"><strong>LeetCode:</strong> Contest Rating <strong>1542</strong> | 450+ problems solved across arrays, trees, graphs, and dynamic programming.</p>
-    </div>
-    <div class="ach-item reveal">
-      <div class="ach-bullet"></div>
-      <p class="ach-text"><strong>CodeChef:</strong> Contest Rating <strong>1200</strong> | 100+ problems solved.</p>
-    </div>
-    <div class="ach-item reveal">
-      <div class="ach-bullet"></div>
-      <p class="ach-text"><strong>GeeksForGeeks:</strong> 160+ problems solved covering core data structures and algorithms.</p>
-    </div>
-  </div>
-
-  <br /><br />
-  <p class="section-label reveal">Certifications</p>
-  <div class="cert-grid">
-    <div class="cert-card reveal">
-      <p class="cert-title">Claude Code In Action</p>
-      <p class="cert-issuer">Anthropic</p>
-      <p class="cert-year">2026</p>
-    </div>
-    <div class="cert-card reveal">
-      <p class="cert-title">Claude Code 101</p>
-      <p class="cert-issuer">Anthropic</p>
-      <p class="cert-year">2026</p>
-    </div>
-    <div class="cert-card reveal">
-      <p class="cert-title">Claude 101</p>
-      <p class="cert-issuer">Anthropic</p>
-      <p class="cert-year">2026</p>
-    </div>
-    <div class="cert-card reveal">
-      <p class="cert-title">Problem Solving (Basic)</p>
-      <p class="cert-issuer">HackerRank</p>
-      <p class="cert-year">2026</p>
-    </div>
-     <div class="cert-card reveal">
-      <p class="cert-title">Python (Basic)</p>
-      <p class="cert-issuer">HackerRank</p>
-      <p class="cert-year">2026</p>
-    </div>
-    <div class="cert-card reveal">
-      <p class="cert-title"> CSS (Basic)</p>
-      <p class="cert-issuer">HackerRank</p>
-      <p class="cert-year">2026</p>
-    </div>
-    <div class="cert-card reveal">
-      <p class="cert-title"> DP Camp</p>
-      <p class="cert-issuer">Algo University</p>
-      <p class="cert-year">2026</p>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- CONTACT -->
-<section id="contact">
-  <p class="section-label reveal">06 — Contact</p>
-  <h2 class="section-title reveal">Let's Connect</h2>
-  <div class="contact-grid">
-    <div class="contact-intro reveal">
-      <p>I'm currently seeking <strong>software engineering internship</strong> opportunities and open to freelance projects. If you have a role, project, or just want to say hi — reach out.</p>
-      <p>I respond to emails promptly. You can also find me on LinkedIn, GitHub, or competitive programming platforms.</p>
-      
-    </div>
-    <div class="contact-links reveal">
-      <a href="mailto:abdulhannandheriwala@gmail.com" class="contact-item">
-        <span class="contact-icon">✉️</span>
-        abdulhannandheriwala@gmail.com
-      </a>
-      <a href="tel:+918511807691" class="contact-item">
-        <span class="contact-icon">📞</span>
-        +91 85118 07691
-      </a>
-      <a href="https://www.linkedin.com/in/abdulhannan-dheriwala-205506274/" target="_blank" rel="noopener" class="contact-item">
-        <span class="contact-icon">💼</span>
-        LinkedIn — Abdulhannan Dheriwala
-      </a>
-      <a href="https://github.com/abdulHannan22" target="_blank" rel="noopener" class="contact-item">
-        <span class="contact-icon">🐙</span>
-        GitHub — abdulHannan22
-      </a>
-      <a href="https://leetcode.com/u/abd_hannan/" target="_blank" rel="noopener" class="contact-item">
-        <span class="contact-icon">⚡</span>
-        LeetCode — abd_hannan
-      </a>
-      <a href="https://www.geeksforgeeks.org/user/abdulhannanbncs/" target="_blank" rel="noopener" class="contact-item">
-        <span class="contact-icon">🌿</span>
-        GeeksForGeeks — abdulhannanbncs
-      </a>
-      <a href="https://codeforces.com/profile/abd_hannan" target="_blank" rel="noopener" class="contact-item">
-        <span class="contact-icon">🏆</span>
-        Codeforces — abd_hannan
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <span>&lt;AH /&gt; — Abdulhannan Dheriwala</span>
-  <span>© 2026 · Built with passion &amp; code · Vadodara, Gujarat</span>
-</footer>
-
-<script>
-  // Hamburger menu
-  const hamburger = document.getElementById('hamburger');
-  const navLinks = document.getElementById('navLinks');
-  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
-  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
-
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('visible'), i * 60);
-        observer.unobserve(entry.target);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Abdulhannan Dheriwala — Full-Stack Developer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0a;
+        --bg2: #111111;
+        --bg3: #181818;
+        --surface: #1e1e1e;
+        --border: #2a2a2a;
+        --accent: #e8ff47;
+        --accent2: #ff6b35;
+        --text: #f0f0f0;
+        --muted: #888;
+        --faint: #3a3a3a;
+        --radius: 4px;
       }
-    });
-  }, { threshold: 0.1 });
-  reveals.forEach(el => observer.observe(el));
 
-  // Active nav highlight
-  const sections = document.querySelectorAll('section[id]');
-  const navAnchors = document.querySelectorAll('.nav-links a');
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
-    navAnchors.forEach(a => {
-      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
-    });
-  });
-</script>
-</body>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Syne", sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* ── SCROLLBAR ── */
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--accent);
+        border-radius: 2px;
+      }
+
+      /* ── NOISE OVERLAY ── */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.4;
+      }
+
+      /* ── NAV ── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.2rem 2.5rem;
+        background: rgba(10, 10, 10, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav-logo {
+        font-family: "DM Mono", monospace;
+        font-size: 0.9rem;
+        color: var(--accent);
+        letter-spacing: 0.05em;
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2.5rem;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.82rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--accent);
+      }
+
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 4px;
+      }
+      .hamburger span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--text);
+        transition: all 0.3s;
+      }
+
+      /* ── MOBILE NAV ── */
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+          position: fixed;
+          inset: 0;
+          top: 60px;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background: var(--bg);
+          gap: 3rem;
+        }
+        .nav-links.open {
+          display: flex;
+        }
+        .nav-links a {
+          font-size: 1.2rem;
+        }
+        .hamburger {
+          display: flex;
+        }
+        nav {
+          padding: 1rem 1.5rem;
+        }
+      }
+
+      /* ── SECTIONS ── */
+      section {
+        padding: 6rem 2.5rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      /* ── HERO ── */
+      #hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: 8rem;
+        padding-bottom: 4rem;
+        position: relative;
+      }
+
+      .hero-tag {
+        font-family: "DM Mono", monospace;
+        font-size: 0.78rem;
+        color: var(--accent);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.2s forwards;
+      }
+
+      .hero-title {
+        font-size: clamp(2.2rem, 6vw, 4.5rem);
+        font-weight: 800;
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+        margin-bottom: 2rem;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.35s forwards;
+      }
+
+      .hero-title span {
+        display: block;
+        color: transparent;
+        -webkit-text-stroke: 1px var(--faint);
+      }
+
+      .hero-desc {
+        max-width: 560px;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin-bottom: 2.5rem;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.5s forwards;
+      }
+
+      .hero-ctas {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.65s forwards;
+      }
+
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--accent);
+        color: #0a0a0a;
+        padding: 0.8rem 2rem;
+        font-size: 0.88rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-decoration: none;
+        border-radius: var(--radius);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        font-family: "Syne", sans-serif;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(232, 255, 71, 0.3);
+      }
+
+      .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 0.8rem 2rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-decoration: none;
+        border-radius: var(--radius);
+        transition:
+          border-color 0.2s,
+          color 0.2s;
+        font-family: "Syne", sans-serif;
+      }
+      .btn-ghost:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .hero-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border);
+        opacity: 0;
+        animation: fadeUp 0.7s 0.8s forwards;
+      }
+
+      .stat {
+        display: flex;
+        flex-direction: column;
+      }
+      .stat-num {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--accent);
+        line-height: 1;
+      }
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--muted);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-top: 0.3rem;
+      }
+
+      .hero-scroll {
+        position: absolute;
+        bottom: 2rem;
+        left: 2.5rem;
+        font-family: "DM Mono", monospace;
+        font-size: 0.72rem;
+        color: var(--muted);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        animation: fadeUp 0.7s 1.1s forwards;
+        opacity: 0;
+      }
+      .hero-scroll::before {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 1px;
+        background: var(--muted);
+        animation: expandLine 1.2s 1.5s forwards;
+        transform-origin: left;
+        transform: scaleX(0);
+      }
+      @keyframes expandLine {
+        to {
+          transform: scaleX(1);
+        }
+      }
+
+      /* ── SECTION HEADER ── */
+      .section-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.72rem;
+        color: var(--accent);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .section-label::after {
+        content: "";
+        flex: 1;
+        max-width: 60px;
+        height: 1px;
+        background: var(--accent);
+        opacity: 0.4;
+      }
+
+      .section-title {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 800;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        margin-bottom: 3rem;
+      }
+
+      /* ── ABOUT ── */
+      #about .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: start;
+      }
+
+      .about-text {
+        color: var(--muted);
+        font-size: 1.02rem;
+        line-height: 1.8;
+      }
+      .about-text p + p {
+        margin-top: 1.2rem;
+      }
+      .about-text strong {
+        color: var(--text);
+      }
+
+      .about-links {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .platform-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.2rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        text-decoration: none;
+        color: var(--text);
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        font-size: 0.9rem;
+      }
+      .platform-link:hover {
+        border-color: var(--accent);
+        background: rgba(232, 255, 71, 0.03);
+      }
+
+      .platform-left {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+      .platform-icon {
+        font-size: 1.1rem;
+      }
+      .platform-name {
+        font-weight: 600;
+      }
+      .platform-stat {
+        font-family: "DM Mono", monospace;
+        font-size: 0.78rem;
+        color: var(--accent);
+      }
+
+      @media (max-width: 768px) {
+        #about .about-grid {
+          grid-template-columns: 1fr;
+          gap: 2.5rem;
+        }
+      }
+
+      /* ── EDUCATION ── */
+      .edu-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .edu-card {
+        padding: 1.8rem 2rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg2);
+        position: relative;
+        overflow: hidden;
+        transition: border-color 0.2s;
+      }
+      .edu-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--accent);
+      }
+      .edu-card:hover {
+        border-color: var(--faint);
+      }
+
+      .edu-degree {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+      }
+      .edu-school {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 0.6rem;
+      }
+      .edu-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        font-family: "DM Mono", monospace;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+      .edu-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .edu-cgpa {
+        color: var(--accent) !important;
+        font-weight: 500;
+      }
+
+      /* ── SKILLS ── */
+      .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .skill-group {
+        padding: 1.8rem;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        transition: border-color 0.25s;
+      }
+      .skill-group:hover {
+        border-color: var(--faint);
+      }
+
+      .skill-group-title {
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-family: "DM Mono", monospace;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .skill-tag {
+        padding: 0.3rem 0.75rem;
+        background: var(--surface);
+        border-radius: 2px;
+        font-size: 0.82rem;
+        color: var(--text);
+        font-weight: 500;
+        border: 1px solid transparent;
+        transition:
+          border-color 0.2s,
+          color 0.2s;
+      }
+      .skill-tag:hover {
+        border-color: var(--border);
+        color: var(--accent);
+      }
+
+      /* ── PROJECTS ── */
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .project-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        transition:
+          border-color 0.25s,
+          transform 0.25s;
+        position: relative;
+        overflow: hidden;
+      }
+      .project-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(
+          circle at top right,
+          rgba(232, 255, 71, 0.06),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .project-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+      }
+
+      .project-number {
+        font-family: "DM Mono", monospace;
+        font-size: 0.72rem;
+        color: var(--faint);
+        letter-spacing: 0.1em;
+        margin-bottom: 1.2rem;
+      }
+
+      .project-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+      }
+      .project-desc {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.7;
+        flex: 1;
+        margin-bottom: 1.5rem;
+      }
+
+      .project-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-bottom: 1.5rem;
+      }
+      .project-tag {
+        padding: 0.2rem 0.6rem;
+        background: rgba(232, 255, 71, 0.08);
+        color: var(--accent);
+        font-size: 0.73rem;
+        font-family: "DM Mono", monospace;
+        border-radius: 2px;
+      }
+
+      .project-links {
+        display: flex;
+        gap: 1rem;
+      }
+      .project-link {
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: var(--muted);
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+      .project-link:hover {
+        color: var(--accent);
+      }
+      .project-link svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      /* ── ACHIEVEMENTS ── */
+      .ach-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .ach-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.2rem;
+        padding: 1.4rem 1.8rem;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        transition: border-color 0.2s;
+      }
+      .ach-item:hover {
+        border-color: var(--faint);
+      }
+
+      .ach-bullet {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+        margin-top: 7px;
+      }
+      .ach-text {
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+      .ach-text strong {
+        color: var(--text);
+      }
+
+      /* ── CERTIFICATIONS ── */
+      .cert-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.2rem;
+      }
+
+      .cert-card {
+        padding: 1.5rem;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        transition: border-color 0.2s;
+      }
+      .cert-card:hover {
+        border-color: var(--faint);
+      }
+      .cert-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 0.4rem;
+      }
+      .cert-issuer {
+        font-family: "DM Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--accent);
+        margin-bottom: 0.3rem;
+      }
+      .cert-year {
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      /* ── CONTACT ── */
+      #contact .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: start;
+      }
+
+      .contact-intro {
+        color: var(--muted);
+        font-size: 1.02rem;
+        line-height: 1.8;
+      }
+      .contact-intro p + p {
+        margin-top: 1.2rem;
+      }
+
+      .contact-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.2rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        text-decoration: none;
+        color: var(--text);
+        font-size: 0.9rem;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+      .contact-item:hover {
+        border-color: var(--accent);
+        background: rgba(232, 255, 71, 0.03);
+      }
+      .contact-icon {
+        font-size: 1rem;
+        color: var(--accent);
+        width: 1.4rem;
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        #contact .contact-grid {
+          grid-template-columns: 1fr;
+          gap: 2.5rem;
+        }
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 2rem 2.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1100px;
+        margin: 0 auto;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+      footer span {
+        font-family: "DM Mono", monospace;
+      }
+      footer a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      /* ── DIVIDER ── */
+      .section-divider {
+        max-width: 1100px;
+        margin: 0 auto;
+        border: none;
+        border-top: 1px solid var(--border);
+      }
+
+      /* ── ANIMATIONS ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: none;
+      }
+
+      /* ── MOBILE ── */
+      @media (max-width: 640px) {
+        section {
+          padding: 4rem 1.5rem;
+        }
+        .hero-stats {
+          gap: 1.5rem;
+        }
+        .stat-num {
+          font-size: 1.8rem;
+        }
+        .projects-grid {
+          grid-template-columns: 1fr;
+        }
+        .skills-grid {
+          grid-template-columns: 1fr;
+        }
+        .cert-grid {
+          grid-template-columns: 1fr;
+        }
+        footer {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <a href="#hero" class="nav-logo">&lt;AH /&gt;</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero">
+      <p class="hero-tag">
+        Full-Stack Developer · MERN Stack · Ranked #1 in Department
+      </p>
+      <h1 class="hero-title">Abdulhannan<span>Dheriwala</span></h1>
+      <p class="hero-desc">
+        Building production-ready web applications and REST APIs. Passionate
+        about clean architecture, scalable backends, and solving complex
+        problems — 900+ DSA problems solved.
+      </p>
+      <div class="hero-ctas">
+        <a href="#projects" class="btn-primary">View Projects →</a>
+        <a href="#contact" class="btn-ghost">Get In Touch</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">900+</span
+          ><span class="stat-label">DSA Problems</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">8.63</span><span class="stat-label">CGPA</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">#1</span
+          ><span class="stat-label">Dept Rank</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">1569</span
+          ><span class="stat-label">LeetCode Rating</span>
+        </div>
+      </div>
+      <div class="hero-scroll">Scroll to explore</div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- ABOUT -->
+    <section id="about">
+      <p class="section-label reveal">01 — About</p>
+      <h2 class="section-title reveal">Who I Am</h2>
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p>
+            I'm a <strong>Full-Stack Developer</strong> and final-year B.Tech
+            (IT) student at Parul University, Vadodara — currently ranked
+            <strong>1st in my department</strong>. I specialise in the MERN
+            stack, building scalable REST APIs and full-stack web applications.
+          </p>
+          <p>
+            My approach combines strong CS fundamentals with real-world
+            engineering: clean MVC architecture, role-based auth systems, cloud
+            integrations, and performance-minded design. I've built projects
+            like <strong>Smart-Stay</strong> and a
+            <strong>Course-Selling Platform API</strong> from scratch.
+          </p>
+          <p>
+            Outside work I compete on LeetCode, GeeksForGeeks, and CodeChef —
+            algorithmic thinking keeps my problem-solving sharp. I'm actively
+            seeking
+            <strong>software engineering internship</strong> opportunities.
+          </p>
+        </div>
+        <div class="reveal">
+          <p class="section-label" style="margin-bottom: 1.5rem">
+            Coding Profiles
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 0.8rem">
+            <a
+              href="https://github.com/abdulHannan22"
+              target="_blank"
+              rel="noopener"
+              class="platform-link"
+            >
+              <span class="platform-left"
+                ><span class="platform-icon">🐙</span
+                ><span class="platform-name">GitHub</span></span
+              >
+              <span class="platform-stat">abdulHannan22 →</span>
+            </a>
+            <a
+              href="https://leetcode.com/u/abd_hannan/"
+              target="_blank"
+              rel="noopener"
+              class="platform-link"
+            >
+              <span class="platform-left"
+                ><span class="platform-icon">⚡</span
+                ><span class="platform-name">LeetCode</span></span
+              >
+              <span class="platform-stat">500+ · Rating 1569 →</span>
+            </a>
+            <a
+              href="https://codeforces.com/profile/abd_hannan"
+              target="_blank"
+              rel="noopener"
+              class="platform-link"
+            >
+              <span class="platform-left"
+                ><span class="platform-icon">🏆</span
+                ><span class="platform-name">Codeforces</span></span
+              >
+              <span class="platform-stat">abd_hannan →</span>
+            </a>
+            <a
+              href="https://www.geeksforgeeks.org/user/abdulhannanbncs/"
+              target="_blank"
+              rel="noopener"
+              class="platform-link"
+            >
+              <span class="platform-left"
+                ><span class="platform-icon">🌿</span
+                ><span class="platform-name">GeeksForGeeks</span></span
+              >
+              <span class="platform-stat">160+ problems →</span>
+            </a>
+            <a
+              href="https://www.codechef.com/"
+              target="_blank"
+              rel="noopener"
+              class="platform-link"
+            >
+              <span class="platform-left"
+                ><span class="platform-icon">👨‍🍳</span
+                ><span class="platform-name">CodeChef</span></span
+              >
+              <span class="platform-stat">100+ · Rating 1200 →</span>
+            </a>
+            <a
+              href="https://www.linkedin.com/in/abdulhannan-dheriwala-205506274/"
+              target="_blank"
+              rel="noopener"
+              class="platform-link"
+            >
+              <span class="platform-left"
+                ><span class="platform-icon">💼</span
+                ><span class="platform-name">LinkedIn</span></span
+              >
+              <span class="platform-stat">Connect →</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- EDUCATION -->
+    <section id="education">
+      <p class="section-label reveal">02 — Education</p>
+      <h2 class="section-title reveal">Academic Background</h2>
+      <div class="edu-list">
+        <div class="edu-card reveal">
+          <p class="edu-degree">B.Tech — Information Technology</p>
+          <p class="edu-school">Parul University, Vadodara, Gujarat</p>
+          <div class="edu-meta">
+            <span>📅 2024 – 2027 (Expected)</span>
+            <span class="edu-cgpa">⭐ CGPA 8.63 / 10</span>
+            <span>🏆 Ranked 1st in Department (5th Sem)</span>
+          </div>
+        </div>
+        <div class="edu-card reveal">
+          <p class="edu-degree">Diploma — Information Technology</p>
+          <p class="edu-school">
+            Gujarat Technological University, Ahmedabad, Gujarat
+          </p>
+          <div class="edu-meta">
+            <span>📅 2021 – 2024</span>
+            <span class="edu-cgpa">⭐ CGPA 8.70 / 10</span>
+          </div>
+        </div>
+        <div class="edu-card reveal">
+          <p class="edu-degree">Secondary Education — Standard 10th</p>
+          <p class="edu-school">
+            Gujarat Secondary & Higher Secondary Education Board, Vadodara
+          </p>
+          <div class="edu-meta">
+            <span>📅 2020 – 2021</span>
+            <span class="edu-cgpa">⭐ 87.33%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <p class="section-label reveal">03 — Skills</p>
+      <h2 class="section-title reveal">Technical Arsenal</h2>
+      <div class="skills-grid">
+        <div class="skill-group reveal">
+          <p class="skill-group-title">Languages</p>
+          <div class="skill-tags">
+            <span class="skill-tag">JavaScript (ES6+)</span>
+            <span class="skill-tag">C++</span>
+            <span class="skill-tag">Java</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">HTML5</span>
+            <span class="skill-tag">CSS3</span>
+          </div>
+        </div>
+        <div class="skill-group reveal">
+          <p class="skill-group-title">Frontend</p>
+          <div class="skill-tags">
+            <span class="skill-tag">React.js</span>
+            <span class="skill-tag">Tailwind CSS</span>
+            <span class="skill-tag">Bootstrap</span>
+            <span class="skill-tag">EJS</span>
+            <span class="skill-tag">Responsive Design</span>
+          </div>
+        </div>
+        <div class="skill-group reveal">
+          <p class="skill-group-title">Backend</p>
+          <div class="skill-tags">
+            <span class="skill-tag">Node.js</span>
+            <span class="skill-tag">Express.js</span>
+            <span class="skill-tag">REST API</span>
+            <span class="skill-tag">MVC Architecture</span>
+            <span class="skill-tag">JWT Auth</span>
+            <span class="skill-tag">Passport.js</span>
+          </div>
+        </div>
+        <div class="skill-group reveal">
+          <p class="skill-group-title">AI and ML</p>
+          <div class="skill-tags">
+            <span class="skill-tag">LangChain</span>
+            <span class="skill-tag">RAG Pipelines</span>
+            <span class="skill-tag">Google Gemini API</span>
+            <span class="skill-tag">FAISS</span>
+            <span class="skill-tag">Streamlit</span>
+          </div>
+        </div>
+        <div class="skill-group reveal">
+          <p class="skill-group-title">Databases</p>
+          <div class="skill-tags">
+            <span class="skill-tag">MongoDB</span>
+            <span class="skill-tag">Mongoose ODM</span>
+            <span class="skill-tag">SQL</span>
+            <span class="skill-tag">Schema Design</span>
+          </div>
+        </div>
+        <div class="skill-group reveal">
+          <p class="skill-group-title">Tools & Platforms</p>
+          <div class="skill-tags">
+            <span class="skill-tag">Git & GitHub</span>
+            <span class="skill-tag">Postman</span>
+            <span class="skill-tag">Cloudinary</span>
+            <span class="skill-tag">Mapbox</span>
+            <span class="skill-tag">Jupyter Notebook</span>
+          </div>
+        </div>
+        <div class="skill-group reveal">
+          <p class="skill-group-title">CS Fundamentals</p>
+          <div class="skill-tags">
+            <span class="skill-tag">DSA</span>
+            <span class="skill-tag">OOP</span>
+            <span class="skill-tag">DBMS</span>
+            <span class="skill-tag">Operating Systems</span>
+            <span class="skill-tag">Computer Networks</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <p class="section-label reveal">01 / Projects</p>
+      <h2 class="section-title reveal">Featured Work</h2>
+      <div class="projects-grid">
+        <div class="project-card reveal">
+          <p class="project-number">01 / Featured</p>
+          <h3 class="project-name">HireTrack – Job Application Tracker</h3>
+
+          <p class="project-desc">
+            Full-stack MERN application for tracking job applications through a
+            Kanban workflow with drag-and-drop functionality, JWT
+            authentication, analytics dashboard, activity logging, and
+            optimistic UI updates. Deployed on Vercel, Render, and MongoDB
+            Atlas.
+          </p>
+
+          <div class="project-tags">
+            <span class="project-tag">React.js</span>
+            <span class="project-tag">Node.js</span>
+            <span class="project-tag">Express.js</span>
+            <span class="project-tag">MongoDB</span>
+            <span class="project-tag">JWT</span>
+            <span class="project-tag">Recharts</span>
+          </div>
+
+          <div class="project-links">
+            <a
+              href="https://github.com/abdulHannan22/HireTrack"
+              target="_blank"
+              rel="noopener"
+              class="project-link"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                />
+              </svg>
+              GitHub
+            </a>
+
+            <a
+              href="https://hire-track-frontend.vercel.app/"
+              target="_blank"
+              rel="noopener"
+              class="project-link"
+            >
+              Live Demo
+            </a>
+          </div>
+        </div>
+        <div class="project-card reveal">
+          <p class="project-number">02 / Featured</p>
+
+          <h3 class="project-name">Multi-PDF Q&A Chatbot</h3>
+
+          <p class="project-desc">
+            AI-powered RAG application built with Python, LangChain, Gemini API,
+            FAISS, and Streamlit. Enables users to upload multiple PDFs and ask
+            natural language questions using semantic search and source-grounded
+            responses with fast vector retrieval.
+          </p>
+
+          <div class="project-tags">
+            <span class="project-tag">Python</span>
+            <span class="project-tag">LangChain</span>
+            <span class="project-tag">Gemini API</span>
+            <span class="project-tag">FAISS</span>
+            <span class="project-tag">Streamlit</span>
+            <span class="project-tag">RAG</span>
+          </div>
+
+          <div class="project-links">
+            <a
+              href="https://github.com/abdulHannan22/Gemini-AI"
+              target="_blank"
+              rel="noopener"
+              class="project-link"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                />
+              </svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+        <div class="project-card reveal">
+          <p class="project-number">03 / Featured</p>
+          <h3 class="project-name">Course-Selling Platform API</h3>
+          <p class="project-desc">
+            Scalable REST API for a course marketplace with dual-role access
+            (admin/user), JWT stateless authentication, bcrypt password hashing,
+            and 11 RESTful endpoints across 3 modular route handlers. MongoDB
+            schema with 4 interconnected collections.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Node.js</span>
+            <span class="project-tag">Express.js</span>
+            <span class="project-tag">MongoDB</span>
+            <span class="project-tag">JWT</span>
+            <span class="project-tag">bcrypt</span>
+            <span class="project-tag">MVC</span>
+          </div>
+          <div class="project-links">
+            <a
+              href="https://github.com/abdulHannan22/CourseBackend"
+              target="_blank"
+              rel="noopener"
+              class="project-link"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                />
+              </svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+
+        <div class="project-card reveal">
+          <p class="project-number">04 / Featured</p>
+          <h3 class="project-name">Smart-Stay</h3>
+          <p class="project-desc">
+            Full-stack property listing platform with Passport.js session auth,
+            Cloudinary multi-image uploads, Mapbox geocoding and interactive
+            maps, MVC architecture, server-side EJS rendering, and a full CRUD
+            review system.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Node.js</span>
+            <span class="project-tag">Express.js</span>
+            <span class="project-tag">MongoDB</span>
+            <span class="project-tag">EJS</span>
+            <span class="project-tag">Cloudinary</span>
+            <span class="project-tag">Mapbox</span>
+            <span class="project-tag">Passport.js</span>
+          </div>
+          <div class="project-links">
+            <a
+              href="https://github.com/abdulHannan22/Smart-Stay"
+              target="_blank"
+              rel="noopener"
+              class="project-link"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                />
+              </svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+
+        <div class="project-card reveal">
+          <p class="project-number">05 / featured</p>
+          <h3 class="project-name">Spotify Clone</h3>
+          <p class="project-desc">
+            Front-end replica of Spotify's music streaming interface using
+            vanilla JS. Features music playback controls, responsive design, and
+            dynamic DOM manipulation.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">JavaScript</span>
+            <span class="project-tag">HTML</span>
+            <span class="project-tag">CSS</span>
+          </div>
+          <div class="project-links">
+            <a
+              href="https://github.com/abdulHannan22/Spotify-Clone"
+              target="_blank"
+              rel="noopener"
+              class="project-link"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                />
+              </svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+
+        <div class="project-card reveal">
+          <p class="project-number">06 / featured</p>
+          <h3 class="project-name">Task Management App</h3>
+          <p class="project-desc">
+            Responsive React task manager with Tailwind CSS, localStorage
+            persistence, and an intuitive UI for task creation, completion
+            tracking, and filtering.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">React.js</span>
+            <span class="project-tag">Tailwind CSS</span>
+            <span class="project-tag">Vite</span>
+          </div>
+          <div class="project-links">
+            <a
+              href="https://github.com/abdulHannan22/Todo-List"
+              target="_blank"
+              rel="noopener"
+              class="project-link"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                />
+              </svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+
+        <div class="project-card reveal">
+          <p class="project-number">07 / featured</p>
+          <h3 class="project-name">Netflix UI Clone</h3>
+          <p class="project-desc">
+            Pixel-perfect static Netflix interface clone demonstrating mastery
+            of CSS Grid, Flexbox, and responsive design for professional
+            streaming service UIs.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">HTML</span>
+            <span class="project-tag">CSS</span>
+            <span class="project-tag">Responsive</span>
+          </div>
+          <div class="project-links">
+            <a
+              href="https://github.com/abdulHannan22/Netflix-UI-clone"
+              target="_blank"
+              rel="noopener"
+              class="project-link"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                />
+              </svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+
+        <div class="project-card reveal">
+          <p class="project-number">08 / featured</p>
+          <h3 class="project-name">Twitter UI Clone</h3>
+          <p class="project-desc">
+            Faithful recreation of Twitter's interface showcasing advanced
+            HTML/CSS skills with responsive design patterns and precise
+            attention to social media UI aesthetics.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">HTML</span>
+            <span class="project-tag">CSS</span>
+            <span class="project-tag">Responsive</span>
+          </div>
+          <div class="project-links">
+            <a
+              href="https://github.com/abdulHannan22/Twitter-UI-clone"
+              target="_blank"
+              rel="noopener"
+              class="project-link"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                />
+              </svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- ACHIEVEMENTS -->
+    <section id="achievements">
+      <p class="section-label reveal">05 — Achievements</p>
+      <h2 class="section-title reveal">Honors & Recognition</h2>
+      <div class="ach-list">
+        <div class="ach-item reveal">
+          <div class="ach-bullet"></div>
+          <p class="ach-text">
+            <strong>Academic Excellence:</strong> Ranked 1st in the Information
+            Technology department (5th Semester) at Parul University, Vadodara.
+          </p>
+        </div>
+        <div class="ach-item reveal">
+          <div class="ach-bullet"></div>
+          <p class="ach-text">
+            <strong>Competitive Programming:</strong> Solved 700+ DSA problems
+            across LeetCode, GeeksForGeeks, and CodeChef — demonstrating strong
+            algorithmic problem-solving ability.
+          </p>
+        </div>
+        <div class="ach-item reveal">
+          <div class="ach-bullet"></div>
+          <p class="ach-text">
+            <strong>LeetCode:</strong> Contest Rating <strong>1569</strong> |
+            500+ problems solved across arrays, trees, graphs, and dynamic
+            programming.
+          </p>
+        </div>
+        <div class="ach-item reveal">
+          <div class="ach-bullet"></div>
+          <p class="ach-text">
+            <strong>CodeChef:</strong> Contest Rating <strong>1200</strong> |
+            100+ problems solved.
+          </p>
+        </div>
+        <div class="ach-item reveal">
+          <div class="ach-bullet"></div>
+          <p class="ach-text">
+            <strong>GeeksForGeeks:</strong> 160+ problems solved covering core
+            data structures and algorithms.
+          </p>
+        </div>
+      </div>
+
+      <br /><br />
+      <p class="section-label reveal">Certifications</p>
+      <div class="cert-grid">
+        <div class="cert-card reveal">
+          <p class="cert-title">Networking Basics</p>
+          <p class="cert-issuer">Cisco Networking Academy</p>
+          <p class="cert-year">2026</p>
+        </div>
+        <div class="cert-card reveal">
+          <p class="cert-title">Claude Code In Action</p>
+          <p class="cert-issuer">Anthropic</p>
+          <p class="cert-year">2026</p>
+        </div>
+        <div class="cert-card reveal">
+          <p class="cert-title">Claude Code 101</p>
+          <p class="cert-issuer">Anthropic</p>
+          <p class="cert-year">2026</p>
+        </div>
+        <div class="cert-card reveal">
+          <p class="cert-title">Claude 101</p>
+          <p class="cert-issuer">Anthropic</p>
+          <p class="cert-year">2026</p>
+        </div>
+        <div class="cert-card reveal">
+          <p class="cert-title">Problem Solving (Basic)</p>
+          <p class="cert-issuer">HackerRank</p>
+          <p class="cert-year">2026</p>
+        </div>
+        <div class="cert-card reveal">
+          <p class="cert-title">Python (Basic)</p>
+          <p class="cert-issuer">HackerRank</p>
+          <p class="cert-year">2026</p>
+        </div>
+        <div class="cert-card reveal">
+          <p class="cert-title">CSS (Basic)</p>
+          <p class="cert-issuer">HackerRank</p>
+          <p class="cert-year">2026</p>
+        </div>
+        <div class="cert-card reveal">
+          <p class="cert-title">DP Camp</p>
+          <p class="cert-issuer">Algo University</p>
+          <p class="cert-year">2026</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <p class="section-label reveal">06 — Contact</p>
+      <h2 class="section-title reveal">Let's Connect</h2>
+      <div class="contact-grid">
+        <div class="contact-intro reveal">
+          <p>
+            I'm currently seeking
+            <strong>software engineering internship</strong> opportunities and
+            open to freelance projects. If you have a role, project, or just
+            want to say hi — reach out.
+          </p>
+          <p>
+            I respond to emails promptly. You can also find me on LinkedIn,
+            GitHub, or competitive programming platforms.
+          </p>
+        </div>
+        <div class="contact-links reveal">
+          <a href="mailto:abdulhannandheriwala@gmail.com" class="contact-item">
+            <span class="contact-icon">✉️</span>
+            abdulhannandheriwala@gmail.com
+          </a>
+          <a href="tel:+918511807691" class="contact-item">
+            <span class="contact-icon">📞</span>
+            +91 85118 07691
+          </a>
+          <a
+            href="https://www.linkedin.com/in/abdulhannan-dheriwala-205506274/"
+            target="_blank"
+            rel="noopener"
+            class="contact-item"
+          >
+            <span class="contact-icon">💼</span>
+            LinkedIn — Abdulhannan Dheriwala
+          </a>
+          <a
+            href="https://github.com/abdulHannan22"
+            target="_blank"
+            rel="noopener"
+            class="contact-item"
+          >
+            <span class="contact-icon">🐙</span>
+            GitHub — abdulHannan22
+          </a>
+          <a
+            href="https://leetcode.com/u/abd_hannan/"
+            target="_blank"
+            rel="noopener"
+            class="contact-item"
+          >
+            <span class="contact-icon">⚡</span>
+            LeetCode — abd_hannan
+          </a>
+          <a
+            href="https://www.geeksforgeeks.org/user/abdulhannanbncs/"
+            target="_blank"
+            rel="noopener"
+            class="contact-item"
+          >
+            <span class="contact-icon">🌿</span>
+            GeeksForGeeks — abdulhannanbncs
+          </a>
+          <a
+            href="https://codeforces.com/profile/abd_hannan"
+            target="_blank"
+            rel="noopener"
+            class="contact-item"
+          >
+            <span class="contact-icon">🏆</span>
+            Codeforces — abd_hannan
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <span>&lt;AH /&gt; — Abdulhannan Dheriwala</span>
+      <span>© 2026 · Built with passion &amp; code · Vadodara, Gujarat</span>
+    </footer>
+
+    <script>
+      // Hamburger menu
+      const hamburger = document.getElementById("hamburger");
+      const navLinks = document.getElementById("navLinks");
+      hamburger.addEventListener("click", () =>
+        navLinks.classList.toggle("open"),
+      );
+      navLinks
+        .querySelectorAll("a")
+        .forEach((a) =>
+          a.addEventListener("click", () => navLinks.classList.remove("open")),
+        );
+
+      // Scroll reveal
+      const reveals = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+              setTimeout(() => entry.target.classList.add("visible"), i * 60);
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 },
+      );
+      reveals.forEach((el) => observer.observe(el));
+
+      // Active nav highlight
+      const sections = document.querySelectorAll("section[id]");
+      const navAnchors = document.querySelectorAll(".nav-links a");
+      window.addEventListener("scroll", () => {
+        let current = "";
+        sections.forEach((s) => {
+          if (window.scrollY >= s.offsetTop - 120) current = s.id;
+        });
+        navAnchors.forEach((a) => {
+          a.style.color =
+            a.getAttribute("href") === "#" + current ? "var(--accent)" : "";
+        });
+      });
+    </script>
+  </body>
 </html>
