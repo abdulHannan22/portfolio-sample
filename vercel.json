@@ -1,27 +1,9 @@
 {
   "version": 2,
-  "public": true,
-  "builds": [
+  "rewrites": [
     {
-      "src": "portfolio.html",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "."
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/$",
-      "dest": "/portfolio.html"
-    },
-    {
-      "src": "^/portfolio\\.html$",
-      "dest": "/portfolio.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/portfolio.html"
+      "source": "/",
+      "destination": "/portfolio.html"
     }
   ]
 }
